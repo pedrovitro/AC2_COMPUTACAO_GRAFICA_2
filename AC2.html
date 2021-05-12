@@ -44,6 +44,14 @@
     <canvas id="renderCanvas"></canvas>
     <script>
    
+   var canvas = document.getElementById("renderCanvas");
+
+var engine = null;
+var scene = null;
+var sceneToRender = null;
+var createDefaultEngine = function () { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true, disableWebGL2Support: false }); };
+var scene;
+
 var createScene = function () {
 
 // Low Poly Character with Blender Tutorial of Grant Abbitt: https://www.youtube.com/user/mediagabbitt
@@ -70,10 +78,10 @@ var light2 = new BABYLON.DirectionalLight("dir01", new BABYLON.Vector3(0, -0.5, 
 light2.position = new BABYLON.Vector3(0, 5, 5);
 
 // Skybox
-var skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 1000.0 }, scene);
+var skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 1500.0 }, scene);
 var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
 skyboxMaterial.backFaceCulling = false;
-skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/skybox", scene);
+skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("tex/skybox4", scene);
 skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
 skyboxMaterial.diffuseColor = BABYLON.Color3.Black()
 skyboxMaterial.specularColor = BABYLON.Color3.Black();
@@ -82,7 +90,7 @@ skybox.material = skyboxMaterial;
 // GUI
 var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
 var instructions = new BABYLON.GUI.TextBlock();
-instructions.text = "Move w/ WASD keys, B for Samba, look with the mouse";
+instructions.text = "****Move w/ WASD keys, B for Samb**** Geazi Antunes 180683 & Pedro Vitro 180122";
 instructions.color = "white";
 instructions.fontSize = 16;
 instructions.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT
@@ -91,8 +99,9 @@ advancedTexture.addControl(instructions);
 
 // Ground
 var ground = BABYLON.MeshBuilder.CreateGround("ground", { height: 50, width: 50, subdivisions: 4 }, scene);
+//var largeGround = BABYLON.MeshBuilder.CreateGroundFromHeightMap("largeGround", "tex/map_circ.png", {width:50, height:50, subdivisions: 4, minHeight:0, maxHeight: 10});
 var groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
-groundMaterial.diffuseTexture = new BABYLON.Texture("textures/wood.jpg", scene);
+groundMaterial.diffuseTexture = new BABYLON.Texture("tex/wood.jpg", scene);
 groundMaterial.diffuseTexture.uScale = 30;
 groundMaterial.diffuseTexture.vScale = 30;
 groundMaterial.specularColor = new BABYLON.Color3(.1, .1, .1);
@@ -199,7 +208,6 @@ return scene;
 
 
 
-
     initFunction = async function () {
         var asyncEngineCreation = async function () {
             try {
@@ -208,7 +216,7 @@ return scene;
                 console.log("the available createEngine function failed. Creating the default engine instead");
                 return createDefaultEngine();
             }
-    }
+         }
 
             engine = await asyncEngineCreation();
             if (!engine) throw 'engine should not be null.';
@@ -230,7 +238,6 @@ return scene;
     });
 
 
-</script>
-</body>
-
+        </script>
+    </body>
 </html>
