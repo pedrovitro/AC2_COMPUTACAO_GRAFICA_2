@@ -54,6 +54,8 @@ var scene;
 
 var createScene = function () {
 
+
+
 // Low Poly Character with Blender Tutorial of Grant Abbitt: https://www.youtube.com/user/mediagabbitt
 // Character animations by Mixamo: https://www.mixamo.com/
 
@@ -62,6 +64,8 @@ engine.enableOfflineSupport = false;
 // Scene and Camera
 var scene = new BABYLON.Scene(engine);
 
+scene.collisionsEnabled = true;
+//scene.collisionsEnabled = false;
 var camera1 = new BABYLON.ArcRotateCamera("camera1", Math.PI / 2, Math.PI / 4, 10, new BABYLON.Vector3(0, -5, 0), scene);
 scene.activeCamera = camera1;
 scene.activeCamera.attachControl(canvas, true);
@@ -78,10 +82,10 @@ var light2 = new BABYLON.DirectionalLight("dir01", new BABYLON.Vector3(0, -0.5, 
 light2.position = new BABYLON.Vector3(0, 5, 5);
 
 // Skybox
-var skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 1500.0 }, scene);
+var skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 100.0 }, scene);
 var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
 skyboxMaterial.backFaceCulling = false;
-skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("tex/skybox4", scene);
+skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/skybox4", scene);
 skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
 skyboxMaterial.diffuseColor = BABYLON.Color3.Black()
 skyboxMaterial.specularColor = BABYLON.Color3.Black();
@@ -90,7 +94,7 @@ skybox.material = skyboxMaterial;
 // GUI
 var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
 var instructions = new BABYLON.GUI.TextBlock();
-instructions.text = "****Move w/ WASD keys, B for Samb**** Geazi Antunes 180683 & Pedro Vitro 180122";
+instructions.text = "****Move w/ WASD keys, B for Samb**** \n Geazi Antunes 180683 & Pedro Vitro 180122";
 instructions.color = "white";
 instructions.fontSize = 16;
 instructions.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT
@@ -98,14 +102,19 @@ instructions.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTT
 advancedTexture.addControl(instructions);
 
 // Ground
-var ground = BABYLON.MeshBuilder.CreateGround("ground", { height: 50, width: 50, subdivisions: 4 }, scene);
-//var largeGround = BABYLON.MeshBuilder.CreateGroundFromHeightMap("largeGround", "tex/map_circ.png", {width:50, height:50, subdivisions: 4, minHeight:0, maxHeight: 10});
-var groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
-groundMaterial.diffuseTexture = new BABYLON.Texture("tex/wood.jpg", scene);
-groundMaterial.diffuseTexture.uScale = 30;
-groundMaterial.diffuseTexture.vScale = 30;
-groundMaterial.specularColor = new BABYLON.Color3(.1, .1, .1);
-ground.material = groundMaterial;
+//HighMap
+
+   const largeGroundMaterial = new BABYLON.StandardMaterial("largeGroundMaterial");
+   largeGroundMaterial.diffuseTexture = new BABYLON.Texture("textures/neve.jpg");
+
+    
+   const largeGround = BABYLON.MeshBuilder.CreateGroundFromHeightMap("largeGround", "textures/map_circ.png", {width:150, height:150, subdivisions: 20, minHeight:0, maxHeight: 10});
+   largeGround.material = largeGroundMaterial;
+
+   
+   largeGround.position.y = -10;
+
+
 
 // Keyboard events
 var inputMap = {};
@@ -117,6 +126,16 @@ scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionM
     inputMap[evt.sourceEvent.key] = evt.sourceEvent.type == "keydown";
 }));
 
+//Limite de movimentação 
+
+            var limit = BABYLON.MeshBuilder.CreateCylinder("limit", {height:100});
+            //limit.position.y = 0;
+            //limit.scaling.x = 55;
+            //limit.scaling.z = 55;
+            limit.visibility = 1;
+            limit.scaling = new BABYLON.Vector3(50,-1,50);
+            limit.checkCollisions = true;
+            
 
 // Load hero character
 BABYLON.SceneLoader.ImportMesh("", "https://assets.babylonjs.com/meshes/", "HVGirl.glb", scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
@@ -129,7 +148,7 @@ BABYLON.SceneLoader.ImportMesh("", "https://assets.babylonjs.com/meshes/", "HVGi
     camera1.target = hero;
 
     //Hero character variables 
-    var heroSpeed = 0.03;
+    var heroSpeed = 0.3;
     var heroSpeedBackwards = 0.01;
     var heroRotationSpeed = 0.1;
 
@@ -203,8 +222,75 @@ BABYLON.SceneLoader.ImportMesh("", "https://assets.babylonjs.com/meshes/", "HVGi
     });
 });
 
+//criar os objetos
+
+a = 5*1;
+b = 0;
+c = 5*1.4;
+
+B1 = new Box("box1",a,b,0.2);
+B2 = new Box("box2",b,a,0.4);
+B3 = new Box("box3",-a,b,0.6);
+B4 = new Box("box4",b,-a,0.8);
+B5 = new Box("box5",c,c,1);
+B6 = new Box("box6",-c,c,1.2);
+B7 = new Box("box7",c,-c,1.4);
+B8 = new Box("box8",-c,-c,1.6);
+B9 = new Box("box9",a/2,c,1.8);
+B10 = new Box("box10",-a/2,-c,2);
+
+
+//importar mesh
+
+/*
+BABYLON.SceneLoader.ImportMesh("","https://models.babylonjs.com/","ExplodingBarrel.glb",scene);
+var barrel = scene.getMeshByName("ExplodingBarrel");
+barrel.position.x = 0;
+barrel.position.z = 2;
+
+BABYLON.SceneLoader.ImportMesh(
+        "",
+        "https://models.babylonjs.com/",
+        "ExplodingBarrel.glb",
+        scene,
+        function (meshes) {          
+            scene.createDefaultCameraOrLight(true, true, true);
+            scene.createDefaultEnvironment();
+            scene.activeCamera.alpha = -0.5;
+    });
+    */
+
+    //const barrel = await SceneLoader.ImportMeshAsync(null, "https://models.babylonjs.com/", "ExplodingBarrel.glb", this._scene);
+
+
+
 return scene;
 }
+
+
+
+
+
+
+    class Box 
+    {
+        
+        constructor(boxName, x,z, d)
+        {
+            this.box = BABYLON.MeshBuilder.CreateBox(boxName,{height: d, width: d, depth: d}, scene);
+            this.box.position.x = x;
+            this.box.position.y = d/2;
+            this.box.position.z = z;
+
+            var boxMaterial = new BABYLON.StandardMaterial("boxMaterial", scene);
+            boxMaterial.diffuseTexture = new BABYLON.Texture("textures/crate.png", scene);
+
+            this.box.material = boxMaterial;
+            this.box.checkCollisions = true;
+
+        }
+
+    }
 
 
 
