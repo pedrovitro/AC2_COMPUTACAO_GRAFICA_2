@@ -129,13 +129,11 @@ scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionM
 //Limite de movimentação 
 
             var limit = BABYLON.MeshBuilder.CreateCylinder("limit", {height:100});
-            //limit.position.y = 0;
-            //limit.scaling.x = 55;
-            //limit.scaling.z = 55;
-            limit.visibility = 1;
+            limit.visibility = 0;
             limit.scaling = new BABYLON.Vector3(50,-1,50);
             limit.checkCollisions = true;
-            
+
+
 
 // Load hero character
 BABYLON.SceneLoader.ImportMesh("", "https://assets.babylonjs.com/meshes/", "HVGirl.glb", scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
@@ -240,37 +238,36 @@ B9 = new Box("box9",a/2,c,1.8);
 B10 = new Box("box10",-a/2,-c,2);
 
 
-//importar mesh
+//Meshes
+//falta organizar eles, cada um num lugar 
 
-/*
-BABYLON.SceneLoader.ImportMesh("","https://models.babylonjs.com/","ExplodingBarrel.glb",scene);
-var barrel = scene.getMeshByName("ExplodingBarrel");
-barrel.position.x = 0;
-barrel.position.z = 2;
-
-BABYLON.SceneLoader.ImportMesh(
-        "",
-        "https://models.babylonjs.com/",
-        "ExplodingBarrel.glb",
-        scene,
-        function (meshes) {          
-            scene.createDefaultCameraOrLight(true, true, true);
-            scene.createDefaultEnvironment();
-            scene.activeCamera.alpha = -0.5;
-    });
-    */
-
-    //const barrel = await SceneLoader.ImportMeshAsync(null, "https://models.babylonjs.com/", "ExplodingBarrel.glb", this._scene);
-
-
+O1 = new Meshes("https://models.babylonjs.com/Georgia-Tech-Dragon/", "dragon.glb", 1, 1,0, 10);
+O2 = new Meshes("https://models.babylonjs.com/","toast_acrobatics.glb", 1,1,0, 5);
+O3 = new Meshes("https://models.babylonjs.com/","seagulf.glb", 3, 3,1, 0.001);
+O4 = new Meshes("https://models.babylonjs.com/","emoji_heart.glb", 1, 1,0, 10);
+O5 = new Meshes("https://models.babylonjs.com/","aerobatic_plane.glb", 1, 1,0, 10);
+O6 = new Meshes("https://models.babylonjs.com/","ufo.glb", 4, 4,0, 10);
 
 return scene;
 }
 
+    class Meshes
+    {
+        constructor(url, objName, x,z,y,scale)
+        {
+            BABYLON.SceneLoader.ImportMeshAsync("", url, objName).then((result) => {
+            let meshes = result.meshes[0]; 
+                  
+            meshes.position.x = x;
+            meshes.position.z = z;
+            meshes.position.y = y;
+            meshes.scaling = new BABYLON.Vector3(scale,scale,scale);
+           // meshes.checkCollision = true;
 
+        });
+    }
 
-
-
+    }
 
     class Box 
     {
