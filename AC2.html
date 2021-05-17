@@ -166,11 +166,6 @@ BABYLON.SceneLoader.ImportMesh("", "https://assets.babylonjs.com/meshes/", "HVGi
         //Manage the movements of the character (e.g. position, direction)
         if (inputMap["w"]) {
 
-            if(hero.intersectsMesh(aux_box,true))
-            {
-                new Box("box1",0,0,3);
-            }
-
             hero.moveWithCollisions(hero.forward.scaleInPlace(heroSpeed));
             keydown = true;
         }
