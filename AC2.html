@@ -56,6 +56,7 @@ var createScene = function () {
 
 
 
+
 // Low Poly Character with Blender Tutorial of Grant Abbitt: https://www.youtube.com/user/mediagabbitt
 // Character animations by Mixamo: https://www.mixamo.com/
 
@@ -65,7 +66,7 @@ engine.enableOfflineSupport = false;
 var scene = new BABYLON.Scene(engine);
 
 scene.collisionsEnabled = true;
-//scene.collisionsEnabled = false;
+
 var camera1 = new BABYLON.ArcRotateCamera("camera1", Math.PI / 2, Math.PI / 4, 10, new BABYLON.Vector3(0, -5, 0), scene);
 scene.activeCamera = camera1;
 scene.activeCamera.attachControl(canvas, true);
@@ -128,10 +129,10 @@ scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionM
 
 //Limite de movimentação 
 
-            var limit = BABYLON.MeshBuilder.CreateCylinder("limit", {height:100});
-            limit.visibility = 0;
-            limit.scaling = new BABYLON.Vector3(50,-1,50);
-            limit.checkCollisions = true;
+    var limit = BABYLON.MeshBuilder.CreateCylinder("limit", {height:100});
+    limit.visibility = 0;
+    limit.scaling = new BABYLON.Vector3(50,-1,50);
+    limit.checkCollisions = true;
 
 
 
@@ -164,6 +165,22 @@ BABYLON.SceneLoader.ImportMesh("", "https://assets.babylonjs.com/meshes/", "HVGi
         var keydown = false;
         //Manage the movements of the character (e.g. position, direction)
         if (inputMap["w"]) {
+
+            if(hero.intersectsMesh(aux_box,true))
+            {
+                //barrel.remove();
+                
+                 aux_box.material.emisseveColor = new BABYLON.Color3(1,0,0);
+                //aux_box.material = WM;
+                
+                //var newExplosion = new BABYLON.MeshExploder(toExplodeArray,this);
+                //newExplosion.explode();
+            }else
+            {
+                aux_box.material.emisseveColor = new BABYLON.Color3(0,0,0);
+            }
+
+
             hero.moveWithCollisions(hero.forward.scaleInPlace(heroSpeed));
             keydown = true;
         }
@@ -220,7 +237,7 @@ BABYLON.SceneLoader.ImportMesh("", "https://assets.babylonjs.com/meshes/", "HVGi
     });
 });
 
-//criar os objetos
+//criar os objetos 
 
 a = 5*1;
 b = 0;
@@ -239,7 +256,7 @@ B10 = new Box("box10",-a/2,-c,2);
 
 
 //Meshes
-//falta organizar eles, cada um num lugar 
+
 
 O1 = new Meshes("https://models.babylonjs.com/Georgia-Tech-Dragon/", "dragon.glb", 1, 1,0, 10);
 O2 = new Meshes("https://models.babylonjs.com/","toast_acrobatics.glb", 1,1,0, 5);
@@ -247,6 +264,23 @@ O3 = new Meshes("https://models.babylonjs.com/","seagulf.glb", 3, 3,1, 0.001);
 O4 = new Meshes("https://models.babylonjs.com/","emoji_heart.glb", 1, 1,0, 10);
 O5 = new Meshes("https://models.babylonjs.com/","aerobatic_plane.glb", 1, 1,0, 10);
 O6 = new Meshes("https://models.babylonjs.com/","ufo.glb", 4, 4,0, 10);
+
+//Criar Barril
+barrel = new Barrel("https://models.babylonjs.com/","ExplodingBarrel.glb", 4, 4,0, 0.025);
+
+var toExplodeArray = [];
+toExplodeArray.push(barrel);
+
+
+aux_box = BABYLON.MeshBuilder.CreateBox("box_aux",{height: 5, width: 2, depth: 2}, scene);
+aux_box.position.x = 4;
+aux_box.position.y = 0;
+aux_box.position.z = 4;
+aux_box.visibility = 1;
+aux_box.checkCollisions = true;
+
+
+
 
 return scene;
 }
@@ -268,6 +302,39 @@ return scene;
     }
 
     }
+
+    class Barrel
+    {
+        constructor(url, objName, x,z,y,scale)
+        {
+            BABYLON.SceneLoader.ImportMeshAsync("", url, objName).then((result) => {
+            let meshes = result.meshes[0]; 
+                  
+            meshes.position.x = x;
+            meshes.position.z = z;
+            meshes.position.y = y;
+            meshes.scaling = new BABYLON.Vector3(scale,scale,scale);
+        
+
+        });
+
+
+    }
+
+    Remove()
+    {
+        this.dispose();
+    }
+
+    Explosion(toExplodeArray)
+    {
+        var newExplosion = new BABYLON.MeshExploder(toExplodeArray,this);
+        newExplosion.explode();
+    }
+
+    }
+
+
 
     class Box 
     {
