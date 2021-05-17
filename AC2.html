@@ -95,8 +95,8 @@ skybox.material = skyboxMaterial;
 // GUI
 var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
 var instructions = new BABYLON.GUI.TextBlock();
-instructions.text = "****Move w/ WASD keys, B for Samb**** \n Geazi Antunes 180683 & Pedro Vitro 180122";
-instructions.color = "white";
+instructions.text = "Move w/ WASD keys, B for Samb \n Geazi Antunes 180683 & Pedro Vitro 180122";
+instructions.color = "red";
 instructions.fontSize = 16;
 instructions.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT
 instructions.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM
@@ -168,18 +168,8 @@ BABYLON.SceneLoader.ImportMesh("", "https://assets.babylonjs.com/meshes/", "HVGi
 
             if(hero.intersectsMesh(aux_box,true))
             {
-                //barrel.remove();
-                
-                 aux_box.material.emisseveColor = new BABYLON.Color3(1,0,0);
-                //aux_box.material = WM;
-                
-                //var newExplosion = new BABYLON.MeshExploder(toExplodeArray,this);
-                //newExplosion.explode();
-            }else
-            {
-                aux_box.material.emisseveColor = new BABYLON.Color3(0,0,0);
+                new Box("box1",0,0,3);
             }
-
 
             hero.moveWithCollisions(hero.forward.scaleInPlace(heroSpeed));
             keydown = true;
@@ -199,6 +189,8 @@ BABYLON.SceneLoader.ImportMesh("", "https://assets.babylonjs.com/meshes/", "HVGi
         if (inputMap["b"]) {
             keydown = true;
         }
+
+
 
         //Manage animations to be played  
         if (keydown) {
@@ -255,15 +247,17 @@ B9 = new Box("box9",a/2,c,1.8);
 B10 = new Box("box10",-a/2,-c,2);
 
 
+//var intersect = hero.intersectsMesh(B1,false);
+
 //Meshes
 
 
-O1 = new Meshes("https://models.babylonjs.com/Georgia-Tech-Dragon/", "dragon.glb", 1, 1,0, 10);
-O2 = new Meshes("https://models.babylonjs.com/","toast_acrobatics.glb", 1,1,0, 5);
-O3 = new Meshes("https://models.babylonjs.com/","seagulf.glb", 3, 3,1, 0.001);
-O4 = new Meshes("https://models.babylonjs.com/","emoji_heart.glb", 1, 1,0, 10);
-O5 = new Meshes("https://models.babylonjs.com/","aerobatic_plane.glb", 1, 1,0, 10);
-O6 = new Meshes("https://models.babylonjs.com/","ufo.glb", 4, 4,0, 10);
+O1 = new Meshes("https://models.babylonjs.com/Georgia-Tech-Dragon/", "dragon.glb", 5, 1,0, 10);
+O2 = new Meshes("https://models.babylonjs.com/","toast_acrobatics.glb", -3,-10,0, 5);
+O3 = new Meshes("https://models.babylonjs.com/","seagulf.glb", 6, 6,1, 0.001);
+O4 = new Meshes("https://models.babylonjs.com/","emoji_heart.glb", 0, 0,3, 10);
+O5 = new Meshes("https://models.babylonjs.com/","aerobatic_plane.glb", 5, -5,5, 10);
+O6 = new Meshes("https://models.babylonjs.com/","ufo.glb", 0, 10,2, 5);
 
 //Criar Barril
 barrel = new Barrel("https://models.babylonjs.com/","ExplodingBarrel.glb", 4, 4,0, 0.025);
@@ -272,11 +266,11 @@ var toExplodeArray = [];
 toExplodeArray.push(barrel);
 
 
-aux_box = BABYLON.MeshBuilder.CreateBox("box_aux",{height: 5, width: 2, depth: 2}, scene);
+aux_box = BABYLON.MeshBuilder.CreateBox("box_aux",{height: 2.5, width: 1, depth: 1}, scene);
 aux_box.position.x = 4;
 aux_box.position.y = 0;
 aux_box.position.z = 4;
-aux_box.visibility = 1;
+aux_box.visibility = 0;
 aux_box.checkCollisions = true;
 
 
@@ -352,6 +346,38 @@ return scene;
             this.box.material = boxMaterial;
             this.box.checkCollisions = true;
 
+            this.ySlide = new BABYLON.Animation("ySlide", "position.y", 50, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+                let keyFrames = [];
+
+                keyFrames.push({
+                    frame: 0,
+                    value: 0
+                });
+
+                keyFrames.push({
+                    frame: 10,
+                    value: 5 
+                });
+
+                keyFrames.push({
+                    frame: 10,
+                    value: 0
+                });
+
+                this.ySlide.setKeys(keyFrames);
+
+        }
+
+        play()
+        {
+            scene.beginDirectAnimation(this.box, [this.ySlide], 0, 10, true);
+
+        }
+
+        remove()
+        {
+            //this.remove();
+            this.dispose();
         }
 
     }
